@@ -1,4 +1,4 @@
-!/usr/bin/env python3
+#!/usr/bin/env python3
 """
 generate_missaoeuropa.py
 Busca dados do board monday.com 18420142846 (Missão Comercial Europa 2026)
@@ -281,7 +281,7 @@ def build_html(items_raw):
 
     def b_res(v):
         if "Muito maior" in v: cls="b-green"
-        elif "Maior" in v:"    cls="b-blue"
+        elif "Maior" in v:     cls="b-blue"
         elif "Igual" in v:     cls="b-gold"
         elif "Abaixo" in v:    cls="b-red"
         else:                  cls="b-gray"
@@ -706,7 +706,7 @@ td.num {{ text-align: right; font-variant-numeric: tabular-nums; font-weight: 60
 <script>
 Chart.defaults.font.family = "'Inter', system-ui, sans-serif";
 Chart.defaults.font.size   = 12;
-Chart.defaults.color:       = '#7A7A7A';
+Chart.defaults.color       = '#7A7A7A';
 Chart.defaults.plugins.legend.labels.boxWidth = 12;
 Chart.defaults.plugins.legend.labels.padding  = 14;
 
@@ -727,6 +727,7 @@ new Chart(document.getElementById('chartRole'), {{
     }}
   }}
 }});
+
 new Chart(document.getElementById('chartExpect'), {{
   type: 'doughnut',
   data: {{
@@ -734,7 +735,7 @@ new Chart(document.getElementById('chartExpect'), {{
     datasets: [{{ data:{res_data}, backgroundColor:[C.green,C.blue,C.gold,C.red,'#888'], borderWidth:3, borderColor:'#fff', hoverOffset:6 }}]
   }},
   options: {{
-  2 responsive:true, maintainAspectRatio:false, cutout:'62%',
+    responsive:true, maintainAspectRatio:false, cutout:'62%',
     plugins: {{
       legend:  {{ position:'right' }},
       tooltip: {{ callbacks:{{ label: ctx=>`  ${{ctx.label}}: ${{ctx.raw}} (${{Math.round(ctx.raw/N*100)}}%)` }} }}
