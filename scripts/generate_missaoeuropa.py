@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+!/usr/bin/env python3
 """
 generate_missaoeuropa.py
 Busca dados do board monday.com 18420142846 (Missão Comercial Europa 2026)
