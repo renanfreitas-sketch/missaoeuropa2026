@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Relatório de Avaliação – Missão Comercial Europa 2026 | BSCA</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/wordcloud2.js/1.2.2/wordcloud2.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --green:       #1E3D2F;
+  --green-mid:   #2D5E42;
+  --green-light: #4A8C64;
+  --brown:       #7D5A35;
+  --brown-light: #B8895A;
+  --gold:        #C9A84C;
+  --cream:       #F6F1E9;
+  --cream-2:     #EDE6D8;
+  --white:       #FFFFFF;
+  --text:        #1A1A1A;
+  --text-2:      #4A4A4A;
+  --text-muted:  #7A7A7A;
+  --border:      #DDD5C5;
+  --shadow:      0 1px 4px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.07);
+  --shadow-sm:   0 1px 3px rgba(0,0,0,.07);
+  --radius:      12px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--cream);
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 14px;
+  line-height: 1.5;
+}
+img { max-width: 100%; display: block; }
+.site-header {
+  background: var(--green);
+  padding: 0 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 12px rgba(0,0,0,.18);
+}
+.site-header img.logo { height: 36px; width: auto; }
+.header-right { display: flex; align-items: center; gap: 12px; }
+.header-date { font-size: 12px; color: rgba(255,255,255,.6); }
+.header-badge {
+  background: var(--gold); color: var(--green);
+  font-size: 11px; font-weight: 700; letter-spacing: .4px;
+  padding: 4px 12px; border-radius: 20px; text-transform: uppercase;
+}
+.hero {
+  background: linear-gradient(135deg, var(--green) 0%, var(--green-mid) 55%, #3A7557 100%);
+  padding: 48px 32px 52px; color: white; position: relative; overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='28'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat;
+  pointer-events: none;
+}
+.hero-inner { max-width: 1200px; margin: 0 auto; position: relative; }
+.hero-eyebrow {
+  font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+}
+.hero-eyebrow::before { content: ''; display: block; width: 24px; height: 2px; background: var(--gold); }
+.hero h1 {
+  font-size: clamp(22px, 4vw, 34px); font-weight: 800;
+  line-height: 1.15; margin-bottom: 10px; letter-spacing: -.3px;
+}
+.hero h1 span { color: var(--gold); }
+.hero p { font-size: 14px; color: rgba(255,255,255,.7); max-width: 520px; line-height: 1.6; }
+main { max-width: 1200px; margin: 0 auto; padding: 36px 24px 48px; }
+.section-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--brown); display: flex; align-items: center; gap: 8px; margin-bottom: 16px;
+}
+.section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.kpi-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 36px; }
+.kpi-card {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 22px 18px 18px;
+  position: relative; overflow: hidden; box-shadow: var(--shadow-sm);
+  transition: transform .2s, box-shadow .2s;
+}
+.kpi-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+.kpi-card::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--green), var(--green-light));
+  border-radius: 0 0 var(--radius) var(--radius);
+}
+.kpi-card:nth-child(4)::after, .kpi-card:nth-child(5)::after {
+  background: linear-gradient(90deg, var(--brown), var(--gold));
+}
+.kpi-icon { font-size: 20px; margin-bottom: 12px; display: block; }
+.kpi-label { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: .6px; margin-bottom: 8px; }
+.kpi-value { font-size: 30px; font-weight: 800; color: var(--green); line-height: 1; letter-spacing: -.5px; }
+.kpi-value.brown { color: var(--brown); font-size: 24px; }
+.kpi-sub { font-size: 11px; color: var(--text-muted); margin-top: 6px; }
+.card {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 24px 22px; box-shadow: var(--shadow-sm);
+}
+.card-title {
+  font-size: 12px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .8px; color: var(--text-2); margin-bottom: 20px;
+  padding-bottom: 12px; border-bottom: 1px solid var(--cream-2);
+}
+.chart-row { display: grid; gap: 14px; margin-bottom: 14px; }
+.cols-2  { grid-template-columns: 1fr 1fr; }
+.cols-3  { grid-template-columns: 1fr 1fr 1fr; }
+.cols-21 { grid-template-columns: 2fr 1fr; }
+.cols-1  { grid-template-columns: 1fr; }
+.sat-row { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+.sat-row:last-child { margin-bottom: 0; }
+.sat-label { font-size: 12px; color: var(--text-2); width: 200px; flex-shrink: 0; font-weight: 500; }
+.sat-track {
+  flex: 1; height: 24px; background: var(--cream); border-radius: 6px;
+  overflow: hidden; display: flex; border: 1px solid var(--border);
+}
+.sat-seg {
+  height: 100%; display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700; color: white;
+  transition: width .5s cubic-bezier(.4,0,.2,1);
+}
+.sat-pct { width: 42px; text-align: right; font-size: 12px; font-weight: 700; color: var(--green); flex-shrink: 0; }
+.sat-legend {
+  display: flex; gap: 16px; flex-wrap: wrap;
+  margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--cream-2);
+}
+.sat-legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-muted); }
+.sat-legend-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+.mini-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; height: 100%; }
+.mini-item {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 12px; padding: 12px;
+  background: var(--cream); border-radius: 10px;
+}
+.mini-item canvas { width: 90px !important; height: 90px !important; }
+.mini-item p { font-size: 11px; color: var(--text-muted); text-align: center; line-height: 1.4; font-weight: 500; }
+.badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; white-space: nowrap; line-height: 1.4; }
+.b-green  { background: #D4EDDA; color: #1E6B35; }
+.b-blue   { background: #D1E8F5; color: #1A5E8A; }
+.b-gold   { background: #FEF3CD; color: #7D5A00; }
+.b-red    { background: #FDDEDE; color: #8A1A1A; }
+.b-gray   { background: #F0EDE8; color: #5A5048; }
+.table-scroll { overflow-x: auto; border-radius: 8px; }
+table { width: 100%; border-collapse: collapse; font-size: 12.5px; min-width: 780px; }
+thead th {
+  background: var(--green); color: rgba(255,255,255,.85);
+  font-weight: 600; font-size: 10px; text-transform: uppercase;
+  letter-spacing: .7px; padding: 11px 14px; text-align: left; white-space: nowrap;
+}
+thead th:first-child { border-radius: 8px 0 0 0; }
+thead th:last-child  { border-radius: 0 8px 0 0; }
+tbody tr { border-bottom: 1px solid var(--cream-2); transition: background .15s; }
+tbody tr:hover { background: var(--cream); }
+tbody td { padding: 11px 14px; color: var(--text-2); vertical-align: middle; }
+tbody td strong { color: var(--text); font-weight: 600; }
+td.num { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; color: var(--green); }
+.company-sub { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+.site-footer {
+  background: var(--white); border-top: 1px solid var(--border);
+  text-align: center; padding: 28px 32px; margin-top: 24px;
+}
+.site-footer img.logos-bar { max-width: 960px; width: 100%; height: auto; margin: 0 auto; }
+.site-footer p { font-size: 11px; color: var(--text-muted); margin-top: 14px; }
+@media (max-width: 1100px) {
+  .kpi-grid { grid-template-columns: repeat(3, 1fr); }
+  .cols-3   { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 820px) {
+  .site-header { padding: 0 20px; }
+  .hero { padding: 36px 20px 40px; }
+  main { padding: 24px 16px 40px; }
+  .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  .cols-2, .cols-21 { grid-template-columns: 1fr; }
+  .cols-3 { grid-template-columns: 1fr; }
+  .sat-label { width: 130px; font-size: 11px; }
+  .header-date { display: none; }
+}
+@media (max-width: 540px) {
+  .kpi-grid { grid-template-columns: 1fr 1fr; }
+  .kpi-value { font-size: 24px; }
+  .hero h1 { font-size: 20px; }
+}
+/* ── Word cloud ─────────────────────────────────────────── */
+#wordCloudCanvas { width:100%!important; height:220px!important; }
+/* ── Qualitative cards ──────────────────────────────────── */
+.qual-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px; margin-top: 4px;
+}
+.qual-card {
+  background: var(--cream); border-radius: 10px; padding: 14px 16px;
+  border-left: 4px solid var(--green);
+}
+.apex-card { border-left-color: var(--gold); }
+.qual-company {
+  font-size: 11px; font-weight: 700; color: var(--green); text-transform: uppercase;
+  letter-spacing: .5px; margin-bottom: 6px;
+}
+.apex-card .qual-company { color: var(--brown); }
+.qual-text {
+  font-size: 12.5px; color: var(--text-2); line-height: 1.55; white-space: pre-wrap;
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <img class="logo"
+       src="https://www.bsca.com.br/wp-content/uploads/2025/09/Logo_BSCA-white.png"
+       alt="BSCA"
+       onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+  <span style="display:none;color:white;font-weight:800;font-size:16px;letter-spacing:1px">BSCA</span>
+  <div class="header-right">
+    <span class="header-date">Atualizado em 02/07/2026, 07:53</span>
+    <span class="header-badge">17 Respostas</span>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">Brazil. The Coffee Nation</div>
+    <h1>Relatório de Avaliação<br><span>Missão Comercial Europa 2026</span></h1>
+    <p>Resultados consolidados das avaliações recebidas das empresas participantes da Missão Comercial Europa 2026.</p>
+  </div>
+</section>
+
+<main>
+
+  <div class="section-label">Indicadores principais</div>
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <span class="kpi-icon">🏢</span>
+      <div class="kpi-label">Empresas respondentes</div>
+      <div class="kpi-value">17</div>
+      <div class="kpi-sub">formulários recebidos</div>
+    </div>
+    <div class="kpi-card">
+      <span class="kpi-icon">🤝</span>
+      <div class="kpi-label">Contatos realizados</div>
+      <div class="kpi-value">627</div>
+      <div class="kpi-sub">total no evento</div>
+    </div>
+    <div class="kpi-card">
+      <span class="kpi-icon">✨</span>
+      <div class="kpi-label">Novos contatos</div>
+      <div class="kpi-value">463</div>
+      <div class="kpi-sub">74% do total</div>
+    </div>
+    <div class="kpi-card">
+      <span class="kpi-icon">💰</span>
+      <div class="kpi-label">Negócios no evento</div>
+      <div class="kpi-value brown">USD 20.4M</div>
+      <div class="kpi-sub">em USD · estimativa declarada</div>
+    </div>
+    <div class="kpi-card">
+      <span class="kpi-icon">📈</span>
+      <div class="kpi-label">Projeção 12 meses</div>
+      <div class="kpi-value brown">USD 96.6M</div>
+      <div class="kpi-sub">em USD · estimativa declarada</div>
+    </div>
+  </div>
+
+  <div class="section-label">Percepção de resultados</div>
+  <div class="chart-row cols-2" style="margin-bottom:14px">
+    <div class="card">
+      <div class="card-title">Papel do Brazil The Coffee Nation</div>
+      <div style="height:220px;position:relative"><canvas id="chartRole"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Resultado vs. expectativa pré-evento</div>
+      <div style="height:220px;position:relative"><canvas id="chartExpect"></canvas></div>
+    </div>
+  </div>
+
+  <div class="section-label">Satisfação por categoria</div>
+  <div class="chart-row cols-1" style="margin-bottom:14px">
+    <div class="card">
+      <div class="card-title">Avaliação de satisfação — todas as categorias</div>
+      
+        <div class="sat-row">
+          <div class="sat-label">Infraestrutura do evento</div>
+          <div class="sat-track"><div class="sat-seg" style="width:76%;background:#2D5E42">13</div><div class="sat-seg" style="width:18%;background:#4A8C64">3</div><div class="sat-seg" style="width:6%;background:#C9A84C">1</div></div>
+          <div class="sat-pct">94%</div>
+        </div>
+        <div class="sat-row">
+          <div class="sat-label">Atendimento BSCA</div>
+          <div class="sat-track"><div class="sat-seg" style="width:82%;background:#2D5E42">14</div><div class="sat-seg" style="width:18%;background:#4A8C64">3</div></div>
+          <div class="sat-pct">100%</div>
+        </div>
+        <div class="sat-row">
+          <div class="sat-label">Organização do evento</div>
+          <div class="sat-track"><div class="sat-seg" style="width:59%;background:#2D5E42">10</div><div class="sat-seg" style="width:41%;background:#4A8C64">7</div></div>
+          <div class="sat-pct">100%</div>
+        </div>
+        <div class="sat-row">
+          <div class="sat-label">Ambiente de negócios</div>
+          <div class="sat-track"><div class="sat-seg" style="width:53%;background:#2D5E42">9</div><div class="sat-seg" style="width:41%;background:#4A8C64">7</div><div class="sat-seg" style="width:6%;background:#C9A84C">1</div></div>
+          <div class="sat-pct">94%</div>
+        </div>
+      <div class="sat-legend">
+        <div class="sat-legend-item"><div class="sat-legend-dot" style="background:#2D5E42"></div>Muito Satisfeito</div>
+        <div class="sat-legend-item"><div class="sat-legend-dot" style="background:#4A8C64"></div>Satisfeito</div>
+        <div class="sat-legend-item"><div class="sat-legend-dot" style="background:#C9A84C"></div>Indiferente</div>
+        <div class="sat-legend-item"><div class="sat-legend-dot" style="background:#C0614A"></div>Insatisfeito</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">Contatos e indicadores adicionais</div>
+  <div class="chart-row cols-21" style="margin-bottom:14px">
+    <div class="card">
+      <div class="card-title">Tipos de contatos realizados</div>
+      <div style="height:200px;position:relative"><canvas id="chartContacts"></canvas></div>
+      <div style="margin-top:16px">
+        <div class="card-title" style="margin-bottom:8px">Outros tipos citados — nuvem de palavras</div>
+        <canvas id="wordCloudCanvas" height="220"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Indicadores qualitativos</div>
+      <div class="mini-pair">
+        <div class="mini-item">
+          <canvas id="chartStrategy" width="90" height="90"></canvas>
+          <p>Necessidade de<br>mudar estratégia</p>
+        </div>
+        <div class="mini-item">
+          <canvas id="chartCase" width="90" height="90"></canvas>
+          <p>Disponíveis para<br>estudo de caso</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">Vozes das empresas</div>
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-title">Principais motivos de satisfação e insatisfação</div>
+    <div class="qual-grid">
+        <div class="qual-card">
+          <div class="qual-company">FVAgro Ltda</div>
+          <div class="qual-text">Cortesia e presteza. Eficiência e organização. 
+Acho que podem ser criados mais momentos de matchmaking, mesmo sabendo que é difícil juntar os compradores durante as feiras. Talvez com trabalho de agendas individuais prévias junto aos compradores, para levá-los individualmente ao stand</div>
+        </div>
+        <div class="qual-card">
+          <div class="qual-company">Fazenda Cotrim e D’Alessandro</div>
+          <div class="qual-text">Cordialidade, prestativos e solícitos.</div>
+        </div>
+        <div class="qual-card">
+          <div class="qual-company">JOELMA CRISTINA OLIVEIRA FERREIRA</div>
+          <div class="qual-text">Minha experiência foi extremamente positiva. Um dos pontos que mais me chamou atenção foi a clareza e o cuidado em todo o processo. Mesmo quem não conseguiu estar presente fisicamente teve a oportunidade de acompanhar e se sentir parte do evento através das informações compartilhadas no grupo, das redes sociais e do suporte constante pelo WhatsApp.
+A organização esteve impecável, desde o planejamento até a execução. O trabalho de marketing foi muito bem conduzido, valorizando o produtor e o café brasileiro. Fiquei especialmente encantada com a forma como os cafés foram apresentados, com o card contendo informações do café, contato do produtor e foto, pois isso cria uma conexão maior entre quem produz e quem compra.
+Também destaco a acessibilidade das informações e o apoio recebido durante toda a participação. Foi uma experiência que trouxe confiança, visibilidade e mostrou o cuidado em representar cada produtor da melhor forma.
+Como ponto de melhoria, não identifiquei nenhuma insatisfação significativa. Saio com uma percepção muito positiva e agradecida pela oportunidade e por todo o suporte oferecido.</div>
+        </div>
+        <div class="qual-card">
+          <div class="qual-company">Gram Cerri Comercio, Exportacao e Importacao de Cafe LTDA</div>
+          <div class="qual-text">Os participantes e os representantes BSCA fizeram total diferença, todos comprometidos e apoiando uns aos outros.</div>
+        </div>
+        <div class="qual-card">
+          <div class="qual-company">Miriam M Aguiar ME</div>
+          <div class="qual-text">Satisfação: organização, foco, infra-estrutura</div>
+        </div>
+        <div class="qual-card">
+          <div class="qual-company">Sucafina</div>
+          <div class="qual-text">Precisamos criar uma base de contatos e pontos de contatos de visits de modo mais assertivo (com ênfase em compradores reais dos cafés brasileiros). Tivemos isso, mas em algumas visitas isso foi um pouco vago.</div>
+        </div>
+        <div class="qual-card">
+          <div class="qual-company">Biomacafe</div>
+          <div class="qual-text">Acesso a novos mercado ,netowking com novos parceiros e apresentação da nossa empresa</div>
+        </div>
+        <div class="qual-card">
+          <div class="qual-company">Expocacer Cooperativa dos Cafeicultores do Cerrado</div>
+          <div class="qual-text">Novas oportunidades de negócios</div>
+        </div>
+        <div class="qual-card">
+          <div class="qual-company">Sítio Campestre e Barreiro</div>
+          <div class="qual-text">Muita organização, gentileza e presteza.</div>
+        </div>
+        <div class="qual-card">
+          <div class="qual-company">Labareda do CAITITU comércio de café Ltda</div>
+          <div class="qual-text">Expectativa de clientes e volume de negócios</div>
+        </div>
+        <div class="qual-card">
+          <div class="qual-company">São Luiz Estate Coffee</div>
+          <div class="qual-text">Atendimento.</div>
+        </div>
+        <div class="qual-card">
+          <div class="qual-company">Edson Luiz Ignacio</div>
+          <div class="qual-text">Organização, Informações e instruções claras, profissionalismo da equipe.</div>
+        </div>
+        <div class="qual-card">
+          <div class="qual-company">Sítio Toca da Onça</div>
+          <div class="qual-text">Feira e Missão Comercial
+Satisfação: stand com ótima localização, infraestrutura, acabamento e layout. Tamanho e formato da bancada confortáveis. Sala de cupping sem forro, melhor ventilação. Painéis com fotos das fazendas de associados trouxe os compradores para dentro das fazendas. Simpatia, atenção e profissionalismo de toda a equipe BSCA, inclusive os terceirizados. Disponibilização de fotos e vídeos para publicação em nossas redes sociais. 
+
+Insatisfação: ficamos sabendo em cima da hora sobre a disponibilidade de chaleira na bancada e acabamos trazendo as nossas. Foi impresso o arquivo desatualizado da arte da bancada e infelizmente continham erros gramaticais que haviam sido corrigidos e enviados dentro do prazo. 
+
+Londres: locais visitados muito longe entre si, muito tempo no transporte.
+
+Bruxelas e Antuérpia: vários lugares anunciados na programação mas pouca disponibilidade ou interesse das torrefações de receber ou conversar com os produtores. 
+
+Sugestão : painéis impressos ou digitais, em tamanho de pôster, em vários locais do stand com a programação e horários dos cuppings. E não apenas nas redes sociais.</div>
+        </div>
+        <div class="qual-card">
+          <div class="qual-company">SMC Comercial e Exportadora de Café</div>
+          <div class="qual-text">Equipe BSCA super prestativa, competente, ótima organização.</div>
+        </div>
+        <div class="qual-card">
+          <div class="qual-company">MINASUL - Coop.Agroindustrial</div>
+          <div class="qual-text">Todo o apoio da equipe da BSCA foi excelente durante a preparação  da feira , a missão , o estande e todo o trabalho. Tudo funcionou com qualidade acima do esperado .</div>
+        </div>
+        <div class="qual-card">
+          <div class="qual-company">Fazendas Dutra Cultivo Importação e Exportação de Café LTDA</div>
+          <div class="qual-text">O estande maravilhoso com ótima organização e todo apoio da BSCA! Muito satisfeita.</div>
+        </div>
+        <div class="qual-card">
+          <div class="qual-company">Gram Cerri Comercio, Exportacao e Importacao de Cafe LTDA</div>
+          <div class="qual-text">Os representantes BSCA são super atenciosos e comunicativos. A missão foi incrível, perfeita para conhecer mais sobre o mercado, uma ótima oportunidade de aprendizado e crescimento. 
+A união de todos os profissionais presentes na missão é muito grande. Todos se ajudam, se apoiam e comemoram o sucesso um do outro. 
+Fiquei muito feliz por fazer parte disso e pretendo participar novamente.</div>
+        </div></div>
+  </div>
+  <div class="card" style="margin-bottom:36px">
+    <div class="card-title">Ações Apex-Brasil sugeridas pelas empresas</div>
+    <div class="qual-grid">
+        <div class="qual-card apex-card">
+          <div class="qual-company">FVAgro Ltda</div>
+          <div class="qual-text">Rodadas de negócios. Envio de kits de amostras. Participação em feiras e missões</div>
+        </div>
+        <div class="qual-card apex-card">
+          <div class="qual-company">JOELMA CRISTINA OLIVEIRA FERREIRA</div>
+          <div class="qual-text">Gostaria que a ApexBrasil pudesse apoiar não somente na conexão comercial com compradores internacionais, mas também com oportunidades de incentivo financeiro para participação em feiras, missões comerciais e ações de divulgação dos cafés especiais.
+Como produtora, ainda estamos em fase de consolidação dos investimentos realizados na fazenda, com recursos direcionados para melhorias na estrutura, manejo e qualidade da produção. A participação em eventos internacionais é uma oportunidade importante para aprendizado, networking e abertura de novos mercados, porém exige um investimento que nem sempre está disponível para pequenos e médios produtores.
+Acredito que esse apoio seria fundamental para ampliar meu conhecimento, fortalecer minha presença no mercado de cafés especiais e transformar essas oportunidades em negócios, agregando valor ao café produzido na fazenda e levando a história do produtor brasileiro para novos mercados.</div>
+        </div>
+        <div class="qual-card apex-card">
+          <div class="qual-company">Miriam M Aguiar ME</div>
+          <div class="qual-text">Ressaltar as regiões produtoras, IGs, territórios. no espaço institucional da feira</div>
+        </div>
+        <div class="qual-card apex-card">
+          <div class="qual-company">Sucafina</div>
+          <div class="qual-text">Mas rodadas de negociações. Achei muito interessante quando tivemos esse contato direto com compradores.</div>
+        </div>
+        <div class="qual-card apex-card">
+          <div class="qual-company">Biomacafe</div>
+          <div class="qual-text">Visitas a clientes e trip pra conhecer nossa fazenda</div>
+        </div>
+        <div class="qual-card apex-card">
+          <div class="qual-company">Expocacer Cooperativa dos Cafeicultores do Cerrado</div>
+          <div class="qual-text">Feiras, eventos, Expocerrado</div>
+        </div>
+        <div class="qual-card apex-card">
+          <div class="qual-company">São Luiz Estate Coffee</div>
+          <div class="qual-text">Não sei.</div>
+        </div>
+        <div class="qual-card apex-card">
+          <div class="qual-company">Edson Luiz Ignacio</div>
+          <div class="qual-text">Acesso a compradores de cafes  especiais</div>
+        </div>
+        <div class="qual-card apex-card">
+          <div class="qual-company">Sítio Toca da Onça</div>
+          <div class="qual-text">Divulgação para mercados europeus e asiáticos. Subsídio financeiro para participação em feiras do mercado europeu e asiático.</div>
+        </div>
+        <div class="qual-card apex-card">
+          <div class="qual-company">SMC Comercial e Exportadora de Café</div>
+          <div class="qual-text">Missões comerciais em diferentes países.</div>
+        </div></div>
+  </div>
+
+  <div class="section-label">Empresas participantes</div>
+  <div class="card">
+    <div class="card-title">Detalhamento por empresa</div>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Empresa / Responsável</th>
+            <th class="num">Contatos</th>
+            <th class="num">Novos</th>
+            <th>Papel BSCA</th>
+            <th>Resultado</th>
+            <th>Infraestrutura</th>
+            <th>Atendimento</th>
+            <th>Organização</th>
+            <th>Data</th>
+          </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td><strong>FVAgro Ltda</strong><div class="company-sub">Lucas Venturim · Socio Diretor Comercial</div></td>
+          <td class="num">18</td>
+          <td class="num">10</td>
+          <td><span class="badge b-green">Muito relevante</span></td>
+          <td><span class="badge b-blue">Maior que o esperado</span></td>
+          <td><span class="badge b-green">Muito Satisfeito</span></td>
+          <td><span class="badge b-green">Muito Satisfeito</span></td>
+          <td><span class="badge b-blue">Satisfeito</span></td>
+          <td style="color:var(--text-muted);white-space:nowrap">28/06/26</td>
+        </tr>
+        <tr>
+          <td><strong>Fazenda Cotrim e D’Alessandro</strong><div class="company-sub">Matheus D’Alessandro · COO</div></td>
+          <td class="num">150</td>
+          <td class="num">120</td>
+          <td><span class="badge b-green">Muito relevante</span></td>
+          <td><span class="badge b-gold">Igual ao esperado</span></td>
+          <td><span class="badge b-green">Muito Satisfeito</span></td>
+          <td><span class="badge b-green">Muito Satisfeito</span></td>
+          <td><span class="badge b-green">Muito Satisfeito</span></td>
+          <td style="color:var(--text-muted);white-space:nowrap">28/06/26</td>
+        </tr>
+        <tr>
+          <td><strong>JOELMA CRISTINA OLIVEIRA FERREIRA</strong><div class="company-sub">JOELMA CRISTINA OLIVEIRA FERREIRA · PRODUTORA RURAL</div></td>
+          <td class="num">1</td>
+          <td class="num">1</td>
+          <td><span class="badge b-green">Muito relevante</span></td>
+          <td><span class="badge b-blue">Maior que o esperado</span></td>
+          <td><span class="badge b-green">Muito Satisfeito</span></td>
+          <td><span class="badge b-green">Muito Satisfeito</span></td>
+          <td><span class="badge b-green">Muito Satisfeito</span></td>
+          <td style="color:var(--text-muted);white-space:nowrap">01/07/26</td>
+        </tr>
+        <tr>
+          <td><strong>Gram Cerri Comercio, Exportacao e Importacao de Cafe LTDA</strong><div class="company-sub">Fábio Augusto Massini · Proprietário</div></td>
+          <td class="num">17</td>
+          <td class="num">15</td>
+          <td><span class="badge b-green">Muito relevante</span></td>
+          <td><span class="badge b-green">Muito maior que o esperado</span></td>
+          <td><span class="badge b-green">Muito Satisfeito</span></td>
+          <td><span class="badge b-green">Muito Satisfeito</span></td>
+          <td><span class="badge b-green">Muito Satisfeito</span></td>
+          <td style="color:var(--text-muted);white-space:nowrap">28/06/26</td>
+        </tr>
+        <tr>
+          <td><strong>Miriam M Aguiar ME</strong><div class="company-sub">Miriam Aguiar · Diretora</div></td>
+          <td class="num">10</td>
+          <td class="num">7</td>
+          <td><span class="badge b-blue">Relevante</span></td>
+          <td><span class="badge b-gold">Igual ao esperado</span></td>
+          <td><span class="badge b-green">Muito Satisfeito</span></td>
+          <td><span class="badge b-green">Muito Satisfeito</span></td>
+          <td><span class="badge b-green">Muito Satisfeito</span></td>
+          <td style="color:var(--text-muted);white-space:nowrap">28/06/26</td>
+        </tr>
+        <tr>
+          <td><strong>Sucafina</strong><div class="company-sub">Jose antonio okada zerbini · Gerente de cafes especiais</div></td>
+          <td class="num">3</td>
+          <td class="num">1</td>
+          <td><span class="badge b-blue">Relevante</span></td>
+          <td><span class="badge b-blue">Maior que o esperado</span></td>
+          <td><span class="badge b-blue">Satisfeito</span></td>
+          <td><span class="badge b-green">Muito Satisfeito</span></td>
+          <td><span class="badge b-blue">Satisfeito</span></td>
+          <td style="color:var(--text-muted);white-space:nowrap">30/06/26</td>
+        </tr>
+        <tr>
+          <td><strong>Biomacafe</strong><div class="company-sub">Marcelo · Diretor</div></td>
+          <td class="num">12</td>
+          <td class="num">6</td>
+          <td><span class="badge b-blue">Relevante</span></td>
+          <td><span class="badge b-gold">Igual ao esperado</span></td>
+          <td><span class="badge b-blue">Satisfeito</span></td>
+          <td><span class="badge b-blue">Satisfeito</span></td>
+          <td><span class="badge b-blue">Satisfeito</span></td>
+          <td style="color:var(--text-muted);white-space:nowrap">30/06/26</td>
+        </tr>
+        <tr>
+          <td><strong>Expocacer Cooperativa dos Cafeicultores do Cerrado</strong><div class="company-sub">Sandra Moraes · Gerente de Cafes Especiais</div></td>
+          <td class="num">20</td>
+          <td class="num">6</td>
+          <td><span class="badge b-green">Muito relevante</span></td>
+          <td><span class="badge b-blue">Maior que o esperado</span></td>
+          <td><span class="badge b-green">Muito Satisfeito</span></td>
+          <td><span class="badge b-green">Muito Satisfeito</span></td>
+          <td><span class="badge b-blue">Satisfeito</span></td>
+          <td style="color:var(--text-muted);white-space:nowrap">30/06/26</td>
+        </tr>
+        <tr>
+          <td><strong>Sítio Campestre e Barreiro</strong><div class="company-sub">Noêmia Karen de Oliveira · Produtora Rural</div></td>
+          <td class="num">10</td>
+          <td class="num">5</td>
+          <td><span class="badge b-blue">Relevante</span></td>
+          <td><span class="badge b-gold">Igual ao esperado</span></td>
+          <td><span class="badge b-green">Muito Satisfeito</span></td>
+          <td><span class="badge b-blue">Satisfeito</span></td>
+          <td><span class="badge b-blue">Satisfeito</span></td>
+          <td style="color:var(--text-muted);white-space:nowrap">26/06/26</td>
+        </tr>
+        <tr>
+          <td><strong>Labareda do CAITITU comércio de café Ltda</strong><div class="company-sub">Gabriel · Diretor</div></td>
+          <td class="num">10</td>
+          <td class="num">10</td>
+          <td><span class="badge b-blue">Relevante</span></td>
+          <td><span class="badge b-gold">Igual ao esperado</span></td>
+          <td><span class="badge b-blue">Satisfeito</span></td>
+          <td><span class="badge b-green">Muito Satisfeito</span></td>
+          <td><span class="badge b-blue">Satisfeito</span></td>
+          <td style="color:var(--text-muted);white-space:nowrap">30/06/26</td>
+        </tr>
+        <tr>
+          <td><strong>São Luiz Estate Coffee</strong><div class="company-sub">Ana Cecilia Gondim Velloso Branco · Sócia comercial</div></td>
+          <td class="num">10</td>
+          <td class="num">8</td>
+          <td><span class="badge b-blue">Relevante</span></td>
+          <td><span class="badge b-red">Abaixo do esperado</span></td>
+          <td><span class="badge b-gold">Indiferente</span></td>
+          <td><span class="badge b-blue">Satisfeito</span></td>
+          <td><span class="badge b-blue">Satisfeito</span></td>
+          <td style="color:var(--text-muted);white-space:nowrap">28/06/26</td>
+        </tr>
+        <tr>
+          <td><strong>Edson Luiz Ignacio</strong><div class="company-sub">Warley Carlos de Oliveira · Gerente Comercial</div></td>
+          <td class="num">20</td>
+          <td class="num">15</td>
+          <td><span class="badge b-green">Muito relevante</span></td>
+          <td><span class="badge b-blue">Maior que o esperado</span></td>
+          <td><span class="badge b-green">Muito Satisfeito</span></td>
+          <td><span class="badge b-green">Muito Satisfeito</span></td>
+          <td><span class="badge b-green">Muito Satisfeito</span></td>
+          <td style="color:var(--text-muted);white-space:nowrap">28/06/26</td>
+        </tr>
+        <tr>
+          <td><strong>Sítio Toca da Onça</strong><div class="company-sub">Luciana Flores Martins Swan · CEO</div></td>
+          <td class="num">200</td>
+          <td class="num">190</td>
+          <td><span class="badge b-green">Muito relevante</span></td>
+          <td><span class="badge b-blue">Maior que o esperado</span></td>
+          <td><span class="badge b-green">Muito Satisfeito</span></td>
+          <td><span class="badge b-green">Muito Satisfeito</span></td>
+          <td><span class="badge b-green">Muito Satisfeito</span></td>
+          <td style="color:var(--text-muted);white-space:nowrap">28/06/26</td>
+        </tr>
+        <tr>
+          <td><strong>SMC Comercial e Exportadora de Café</strong><div class="company-sub">Vivian Andrade · Trader</div></td>
+          <td class="num">30</td>
+          <td class="num">10</td>
+          <td><span class="badge b-green">Muito relevante</span></td>
+          <td><span class="badge b-green">Muito maior que o esperado</span></td>
+          <td><span class="badge b-green">Muito Satisfeito</span></td>
+          <td><span class="badge b-green">Muito Satisfeito</span></td>
+          <td><span class="badge b-green">Muito Satisfeito</span></td>
+          <td style="color:var(--text-muted);white-space:nowrap">29/06/26</td>
+        </tr>
+        <tr>
+          <td><strong>MINASUL - Coop.Agroindustrial</strong><div class="company-sub">Guilherme Salgado · Diretor comercial</div></td>
+          <td class="num">59</td>
+          <td class="num">29</td>
+          <td><span class="badge b-green">Muito relevante</span></td>
+          <td><span class="badge b-green">Muito maior que o esperado</span></td>
+          <td><span class="badge b-green">Muito Satisfeito</span></td>
+          <td><span class="badge b-green">Muito Satisfeito</span></td>
+          <td><span class="badge b-green">Muito Satisfeito</span></td>
+          <td style="color:var(--text-muted);white-space:nowrap">29/06/26</td>
+        </tr>
+        <tr>
+          <td><strong>Fazendas Dutra Cultivo Importação e Exportação de Café LTDA</strong><div class="company-sub">Victoria dutra · Vendas e exportação</div></td>
+          <td class="num">40</td>
+          <td class="num">15</td>
+          <td><span class="badge b-green">Muito relevante</span></td>
+          <td><span class="badge b-blue">Maior que o esperado</span></td>
+          <td><span class="badge b-green">Muito Satisfeito</span></td>
+          <td><span class="badge b-green">Muito Satisfeito</span></td>
+          <td><span class="badge b-green">Muito Satisfeito</span></td>
+          <td style="color:var(--text-muted);white-space:nowrap">28/06/26</td>
+        </tr>
+        <tr>
+          <td><strong>Gram Cerri Comercio, Exportacao e Importacao de Cafe LTDA</strong><div class="company-sub">Lara Cerri Massini · Exportadora</div></td>
+          <td class="num">17</td>
+          <td class="num">15</td>
+          <td><span class="badge b-green">Muito relevante</span></td>
+          <td><span class="badge b-blue">Maior que o esperado</span></td>
+          <td><span class="badge b-green">Muito Satisfeito</span></td>
+          <td><span class="badge b-green">Muito Satisfeito</span></td>
+          <td><span class="badge b-green">Muito Satisfeito</span></td>
+          <td style="color:var(--text-muted);white-space:nowrap">28/06/26</td>
+        </tr></tbody>
+      </table>
+    </div>
+  </div>
+
+</main>
+
+<footer class="site-footer">
+  <img class="logos-bar"
+       src="https://www.bsca.com.br/wp-content/uploads/2026/03/logos-realizacao-promovidos-desktop-2048x193.png"
+       alt="Realização: BSCA e ApexBrasil">
+  <p>BSCA – Associação Brasileira de Cafés Especiais &nbsp;·&nbsp; Projeto Brazil. The Coffee Nation &nbsp;·&nbsp; Missão Comercial Europa 2026</p>
+</footer>
+
+<script>
+Chart.defaults.font.family = "'Inter', system-ui, sans-serif";
+Chart.defaults.font.size   = 12;
+Chart.defaults.color       = '#7A7A7A';
+Chart.defaults.plugins.legend.labels.boxWidth = 12;
+Chart.defaults.plugins.legend.labels.padding  = 14;
+
+const C = { green:'#2D5E42', greenL:'#4A8C64', gold:'#C9A84C', brown:'#7D5A35', red:'#C0614A', blue:'#4A7FA5' };
+const N = 17;
+
+new Chart(document.getElementById('chartRole'), {
+  type: 'doughnut',
+  data: {
+    labels:   ['Muito relevante','Relevante','Pouco relevante','Irrelevante'],
+    datasets: [{ data:[11, 6, 0, 0], backgroundColor:[C.green,C.blue,C.gold,C.red], borderWidth:3, borderColor:'#fff', hoverOffset:6 }]
+  },
+  options: {
+    responsive:true, maintainAspectRatio:false, cutout:'62%',
+    plugins: {
+      legend:  { position:'right' },
+      tooltip: { callbacks:{ label: ctx=>`  ${ctx.label}: ${ctx.raw} (${Math.round(ctx.raw/N*100)}%)` } }
+    }
+  }
+});
+
+new Chart(document.getElementById('chartExpect'), {
+  type: 'doughnut',
+  data: {
+    labels:   ['Muito maior','Maior','Igual','Abaixo','Muito abaixo'],
+    datasets: [{ data:[3, 8, 5, 1, 0], backgroundColor:[C.green,C.blue,C.gold,C.red,'#888'], borderWidth:3, borderColor:'#fff', hoverOffset:6 }]
+  },
+  options: {
+    responsive:true, maintainAspectRatio:false, cutout:'62%',
+    plugins: {
+      legend:  { position:'right' },
+      tooltip: { callbacks:{ label: ctx=>`  ${ctx.label}: ${ctx.raw} (${Math.round(ctx.raw/N*100)}%)` } }
+    }
+  }
+});
+
+new Chart(document.getElementById('chartContacts'), {
+  type: 'bar',
+  data: {
+    labels: ["Compradores Diretos", "Distribuidores", "Comerciais Exportadoras", "Atacadistas", "Outros"],
+    datasets: [{
+      data: [15, 10, 10, 0, 1],
+      backgroundColor: [C.green,C.greenL,C.brown,C.gold,'#ddd'],
+      borderRadius: 6, borderSkipped: false,
+    }]
+  },
+  options: {
+    responsive:true, maintainAspectRatio:false, indexAxis:'y',
+    plugins:{ legend:{ display:false } },
+    scales:{
+      x:{ grid:{ color:'#EDE6D8' }, ticks:{ stepSize:2 } },
+      y:{ grid:{ display:false } }
+    }
+  }
+});
+
+const mini = (id, data, colors, labels) => new Chart(document.getElementById(id),{
+  type:'doughnut',
+  data:{ labels, datasets:[{ data, backgroundColor:colors, borderWidth:2, borderColor:'#EDE6D8', hoverOffset:4 }]},
+  options:{
+    responsive:false, maintainAspectRatio:false, cutout:'58%',
+    plugins:{
+      legend:{ display:false },
+      tooltip:{ callbacks:{ label: ctx=>`  ${ctx.label}: ${ctx.raw}` } }
+    }
+  }
+});
+mini('chartStrategy', [4,13], [C.red, C.green],  ['Sim','Não']);
+mini('chartCase',     [14,3], [C.green, C.gold],  ['Sim','Não']);
+
+// ── Word cloud ─────────────────────────────────────────────────────────────
+const wcData = [["cobsultores", 14], ["educadores", 14]];
+if (wcData.length > 0 && typeof WordCloud !== 'undefined') {
+  const wcCanvas = document.getElementById('wordCloudCanvas');
+  wcCanvas.width  = wcCanvas.parentElement.offsetWidth || 500;
+  wcCanvas.height = 220;
+  WordCloud(wcCanvas, {
+    list: wcData,
+    gridSize: 6,
+    weightFactor: 1.4,
+    fontFamily: "'Inter', sans-serif",
+    color: (word, weight) => {
+      const palette = ['#1E3D2F','#2D5E42','#4A8C64','#C9A84C','#7D5A35','#4A7FA5'];
+      return palette[Math.floor(Math.random() * palette.length)];
+    },
+    rotateRatio: 0.3,
+    rotationSteps: 2,
+    backgroundColor: '#F8F4EE',
+    drawOutOfBound: false,
+    shrinkToFit: true,
+  });
+} else if (wcData.length === 0) {
+  const el = document.getElementById('wordCloudCanvas');
+  el.style.display = 'none';
+  el.insertAdjacentHTML('afterend','<p style="font-size:12px;color:#aaa;padding:8px 0">Nenhuma resposta registrada.</p>');
+}
+</script>
+</body>
+</html>
